@@ -1,0 +1,10 @@
+- name: "Algoritmeregister v0.2"
+  description: "Registratie van algoritmes zoals vastgesteld door het consortium publieke controle op algoritmes. Wordt momenteel doorontwikkeld door BZK."
+  url: "https://standaard.algoritmeregister.org/schemas/registration-v0.2.schema.json"
+  used_by: ['algoritmeregister.org', 'test']
+  contact: 'johan@tiltshift.nl'
+- name: "Algoritmeregister Amsterdam"
+  description: "Registratie van algoritmes"
+  url: "https://standaard.algoritmeregister.org/schemas/registration-amsterdam.schema.json"
+  used_by: ['Saidot.ai']
+  contact: ""

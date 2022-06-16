@@ -1,0 +1,17 @@
+---
+---
+{
+    "schemas": [
+    {% for schema in site.data.schemas %}
+        {
+        {% for keyval in schema %}
+            {% if keyval[0] == 'used_by' %}
+            "used_by": "{{ keyval[1] | join: ", " }}"{% if forloop.last == false %},{% endif %}
+            {% else %}
+            "{{ keyval[0] }}": "{{ keyval[1] }}"{% if forloop.last == false %},{% endif %}
+            {% endif %}
+        {% endfor %}
+        }{% if forloop.last == false %},{% endif %}
+    {% endfor %}{% if forloop.last == false %},{% endif %}
+    ]
+}

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="microtemplating.js"></script>
+    </head>
+    <body>
+        <header>
+            Doorzoek schema's:
+            <input type="text" id="vind-schemas">
+        </header>
+        <main id="resultaten">
+        </main>
+        <style>
+            html, body {
+                font-family: Arial
+            }
+            header, input {
+                font-size: 1.4em;
+            }
+            .schema {
+                background: #eee;
+                padding: 10px 20px;
+                margin: 10px 0;
+                border-radius: 10px;
+            }
+        </style>
+        <script type="text/template" id="resultaat_template">
+            <div class="schema">
+                <h1><%=name%></h1>
+                <p><%=description%></p>
+                <p><b>Gebruikt in:</b> <%=used_by%><p>
+                <p><a href="<%=url%>"><%=url%></a></p>
+            </div>
+        </script>
+        <script type="module">
+            function render(resultaten) {
+                let html = resultaten.map(function (resultaat) {
+                    return tmpl("resultaat_template", resultaat);
+                });
+                document.getElementById("resultaten").innerHTML = html.join("");
+            }
+            //import schemas from '/js/VZ.mjs';
+            //var VZ = new VZ();
+            var schemas = await fetch ('schemas.json').then(rs => rs.json()).then(rs => rs.schemas);
+            render(schemas);
+            document.getElementById('vind-schemas').onkeyup = function (e) {
+                let val = e.srcElement.value.toLowerCase();
+                let resultaten = schemas.filter(function (schema) {
+                    return schema.name.toLowerCase().indexOf(val) !== -1 ||
+                           schema.description.toLowerCase().indexOf(val) !== -1 ||
+                           schema.used_by.toLowerCase().indexOf(val) !== -1;
+                });
+                render(resultaten);
+            };
+        </script>
+    </body>
+</html>
