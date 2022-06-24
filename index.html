@@ -60,6 +60,9 @@
                 <% for (var i = 0; i < attributes.length; ++i ) { %>
                     <p class="nerd-font"> - <%=attributes[i]%></p>
                 <% }} %>
+                <% if (term.Documentatie) { %>
+                <p>Documentatie: <a href="<%=term.Documentatie%>"><%=term.Documentatie%></a></p>
+                <% } %>
                 <p class="nerd-font">https://schema.json.link.here</p>
             </div>
         </script>

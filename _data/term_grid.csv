@@ -1,4 +1,4 @@
-"Schema","UID","Type","Label","Definitie","Taal","Sortering"
+"Schema","UID","Type","Label","Definitie","Taal","Sortering","Documentatie"
 "Schema","1","Schema","Schema","Top level voor beschrijvingen van de structuur van begrippen en hun relaties","nl","10"
 "Schema","2","Schema","Harmonisator","Universeel schema om andere schema's met elkaar te kunnen vergelijken","nl","12"
 "Schema","3","Schema","RDF","Resource Description Framework","nl","50"
@@ -103,3 +103,5 @@
 "Algoritmeregister","102","Term","Algoritmische Toepassing","software waarmee op geautomatiseerde wijze voorspellingen worden gedaan, besluiten worden genomen en/of adviezen worden gegeven door gebruik te maken van data-analyse, statistiek en/of zelflerende logica"
 "Algoritmeregister","103","Term","Algoritmeregistratie","registratie van de inzet van een algoritmische toepassing door een overheid"
 "Algoritmeregister","104","Term","Metadatastandaard","gedeelde metadatastandaard ten behoeve van algoritmeregistraties"
+"ZGW","105","Term","Klantcontact","","nl","50","https://zaken-api.vng.cloud/api/v1/schema/"
+"ZGW","105","Term","Zaak","","nl","50","https://zaken-api.vng.cloud/api/v1/schema/"
