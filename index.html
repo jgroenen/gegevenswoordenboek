@@ -54,11 +54,11 @@
             <div class="term">
                 <p><span class="tag"><%=term.Schema%></span> <span class="big-font"><%=term.Label%></span></p>
                 <p class="normal-font"><%=term.Definitie%></p>
+                <% if (attributes.length) { %>
                 <p>Attributen:</p>
                 <% for (var i = 0; i < attributes.length; ++i ) { %>
                     <p class="nerd-font"> - <%=attributes[i]%></p>
-                <% } %>
-                </p>
+                <% }} %>
                 <p class="nerd-font">https://schema.json.link.here</p>
             </div>
         </script>
