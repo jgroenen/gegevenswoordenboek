@@ -13,8 +13,8 @@
                     <input type="text" id="vind-termen" placeholder="Zoek Term">
                 </center>
             </header>
-            <main id="resultaten">
-            </main>
+            <main id="resultaten" style="display: none"></main>
+            <main id="schemas" style="display: show"></main>
         </div>
         <style>
             html, body {
@@ -58,7 +58,17 @@
             a {
                 color: #0B71A1;
             }
+            .schema {
+                text-align: center;
+                text-align: center;
+                font-size: 1.2em;
+                margin: 1em 2em;
+                padding: 1em;
+                background: #0B71A1;
+                color: white;
+            }
         </style>
+
         <script type="text/template" id="resultaat_template">
             <div class="term" data-uid="<%=term.UID%>">
                 <p><span data-filter="schema:<%=term.Schema%>" class="tag"><%=term.Schema%></span> <span class="big-font"><%=term.Label%></span></p>
@@ -74,10 +84,16 @@
                 <p class="nerd-font">https://schema.json.link.here</p>
             </div>
         </script>
+
+        <script type="text/template" id="schema_template">
+            <div class="schema" data-filter="schema:<%=schema%>"><%=schema%></div>
+        </script>
+
         <script type="module">
             var terms = await fetch ('terms.json').then(rs => rs.json()).then(rs => rs.terms);
             var triples = await fetch ('triples.json').then(rs => rs.json()).then(rs => rs.triples);
-            render(terms, triples);
+            renderResults(terms, triples);
+            renderSchemas(terms);
 
             function filter(val) {
                 val = val.toLowerCase();
@@ -93,11 +109,12 @@
                             term.Definitie.toLowerCase().indexOf(val) !== -1;
                     });
                 }
-                render(filteredTerms, triples);
-                //terms.
+                document.getElementById("resultaten").style.display = "block";
+                document.getElementById("schemas").style.display = "none"
+                renderResults(filteredTerms, triples);
             }
 
-            function render(terms, triples) {
+            function renderResults(terms, triples) {
                 let html = terms.map(function (term) {
                     let data = {
                         term: term,
@@ -111,6 +128,25 @@
                     return tmpl("resultaat_template", data);
                 });
                 document.getElementById("resultaten").innerHTML = html.join("");
+                let filters = document.querySelectorAll("[data-filter]");
+                for (var i = 0; i < filters.length; i++) {
+                    let val = filters[i].dataset.filter;
+                    filters[i].onclick = function () {
+                        document.getElementById('vind-termen').value = val;
+                        filter(val);
+                    };
+                }
+            }
+
+            function renderSchemas(terms) {
+                let html = terms.map(function (term) {
+                    return term.Schema;
+                }).filter(function (value, index, self) {
+                    return self.indexOf(value) === index;
+                }).map(function (schema) {
+                    return tmpl("schema_template", {schema: schema});
+                });
+                document.getElementById("schemas").innerHTML = html.join("");
                 let filters = document.querySelectorAll("[data-filter]");
                 for (var i = 0; i < filters.length; i++) {
                     let val = filters[i].dataset.filter;
