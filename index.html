@@ -58,7 +58,7 @@
                 <% if (attributes.length) { %>
                 <p>Attributen:</p>
                 <% for (var i = 0; i < attributes.length; ++i ) { %>
-                    <p class="nerd-font"> - <%=attributes[i]%></p>
+                    <p class="nerd-font"> - <a data-hook="search" href="#<%=attributes[i]%>"><%=attributes[i]%></a></p>
                 <% }} %>
                 <% if (term.Documentatie) { %>
                 <p>Documentatie: <a href="<%=term.Documentatie%>"><%=term.Documentatie%></a></p>
@@ -67,6 +67,22 @@
             </div>
         </script>
         <script type="module">
+            var terms = await fetch ('terms.json').then(rs => rs.json()).then(rs => rs.terms);
+            var triples = await fetch ('triples.json').then(rs => rs.json()).then(rs => rs.triples);
+            render(terms, triples);
+            function search() {
+                let val = this.href.substring(this.href.indexOf("#")+1).replace(/\%20/g, " ");
+                document.getElementById('vind-termen').value = val;
+                filter(val);
+            }
+            function filter(val) {
+                val = val.toLowerCase();
+                let filteredTerms = terms.filter(function (term) {
+                    return term.Label.toLowerCase().indexOf(val) !== -1 ||
+                           term.Definitie.toLowerCase().indexOf(val) !== -1;
+                });
+                render(filteredTerms, triples);
+            }
             function render(terms, triples) {
                 let html = terms.map(function (term) {
                     let data = {
@@ -81,17 +97,14 @@
                     return tmpl("resultaat_template", data);
                 });
                 document.getElementById("resultaten").innerHTML = html.join("");
+                let links = document.querySelectorAll("[data-hook='search']");
+                for (var i = 0; i < links.length; i++) {
+                    links[i].onclick = search;
+                }
             }
-            var terms = await fetch ('terms.json').then(rs => rs.json()).then(rs => rs.terms);
-            var triples = await fetch ('triples.json').then(rs => rs.json()).then(rs => rs.triples);
-            render(terms, triples);
             document.getElementById('vind-termen').onkeyup = function (e) {
-                let val = e.srcElement.value.toLowerCase();
-                let filteredTerms = terms.filter(function (term) {
-                    return term.Label.toLowerCase().indexOf(val) !== -1 ||
-                           term.Definitie.toLowerCase().indexOf(val) !== -1;
-                });
-                render(filteredTerms, triples);
+                let val = e.srcElement.value;
+                filter(val);
             };
         </script>
     </body>
