@@ -4,12 +4,15 @@
         <script src="microtemplating.js"></script>
     </head>
     <body>
-        <header>
-            Doorzoek schema's:
-            <input type="text" id="vind-schemas">
-        </header>
-        <main id="resultaten">
-        </main>
+        <div class="wrapper">
+            <header>
+                <center>
+                Doorzoek termen: <input type="text" id="vind-termen">
+                </center>
+            </header>
+            <main id="resultaten">
+            </main>
+        </div>
         <style>
             html, body {
                 font-family: Arial
@@ -17,40 +20,74 @@
             header, input {
                 font-size: 1.4em;
             }
-            .schema {
-                background: #eee;
+            .wrapper {
+                max-width: 780px;
+                margin: auto;
+            }
+            .term {
+                background: #fff;
                 padding: 10px 20px;
-                margin: 10px 0;
-                border-radius: 10px;
+                margin: 10px 10px;
+                box-shadow: 0 4px 4px #eee;
+            }
+            .tag {
+                font-size: 0.9em;
+                background: black;
+                color: white;
+                padding: 0 0.2em;
+                vertical-align: baseline;
+            }
+            .big-font {
+                font-size: 1.2em;
+            }
+            .normal-font {
+
+            }
+            .nerd-font {
+                font-family: monospace;
+            }
+            input {
+                font-size: 1em;
             }
         </style>
         <script type="text/template" id="resultaat_template">
-            <div class="schema">
-                <h1><%=name%></h1>
-                <p><%=description%></p>
-                <p><b>Gebruikt in:</b> <%=used_by%><p>
-                <p><a href="<%=url%>"><%=url%></a></p>
+            <div class="term">
+                <p><span class="tag"><%=term.Schema%></span> <span class="big-font"><%=term.Label%></span></p>
+                <p class="normal-font"><%=term.Definitie%></p>
+                <p>Attributen:</p>
+                <% for (var i = 0; i < attributes.length; ++i ) { %>
+                    <p class="nerd-font"> - <%=attributes[i]%></p>
+                <% } %>
+                </p>
+                <p class="nerd-font">https://schema.json.link.here</p>
             </div>
         </script>
         <script type="module">
-            function render(resultaten) {
-                let html = resultaten.map(function (resultaat) {
-                    return tmpl("resultaat_template", resultaat);
+            function render(terms, triples) {
+                let html = terms.map(function (term) {
+                    let data = {
+                        term: term,
+                        attributes: triples.filter(function (triple) {
+                            return triple.Term1 === term.Label &&
+                                   triple.Relatie === "... heeft kenmerk ..."
+                        }).map(function (triple) {
+                            return triple.Term2;
+                        })
+                    };
+                    return tmpl("resultaat_template", data);
                 });
                 document.getElementById("resultaten").innerHTML = html.join("");
             }
-            //import schemas from '/js/VZ.mjs';
-            //var VZ = new VZ();
-            var schemas = await fetch ('schemas.json').then(rs => rs.json()).then(rs => rs.schemas);
-            render(schemas);
-            document.getElementById('vind-schemas').onkeyup = function (e) {
+            var terms = await fetch ('terms.json').then(rs => rs.json()).then(rs => rs.terms);
+            var triples = await fetch ('triples.json').then(rs => rs.json()).then(rs => rs.triples);
+            render(terms, triples);
+            document.getElementById('vind-termen').onkeyup = function (e) {
                 let val = e.srcElement.value.toLowerCase();
-                let resultaten = schemas.filter(function (schema) {
-                    return schema.name.toLowerCase().indexOf(val) !== -1 ||
-                           schema.description.toLowerCase().indexOf(val) !== -1 ||
-                           schema.used_by.toLowerCase().indexOf(val) !== -1;
+                let filteredTerms = terms.filter(function (term) {
+                    return term.Label.toLowerCase().indexOf(val) !== -1 ||
+                           term.Definitie.toLowerCase().indexOf(val) !== -1;
                 });
-                render(resultaten);
+                render(filteredTerms, triples);
             };
         </script>
     </body>

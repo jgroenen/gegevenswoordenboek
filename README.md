@@ -1,1 +1,1 @@
-# schema's
+# Gegevenswoordenboek

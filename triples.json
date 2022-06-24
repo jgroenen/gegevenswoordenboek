@@ -1,0 +1,13 @@
+---
+---
+{
+    "triples": [
+    {% for term in site.data.triple_grid %}
+        {
+        {% for keyval in term %}
+            "{{ keyval[0] }}": "{{ keyval[1] }}"{% if forloop.last == false %},{% endif %}
+        {% endfor %}
+        }{% if forloop.last == false %},{% endif %}
+    {% endfor %}{% if forloop.last == false %},{% endif %}
+    ]
+}
