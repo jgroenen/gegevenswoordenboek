@@ -52,13 +52,13 @@
             }
         </style>
         <script type="text/template" id="resultaat_template">
-            <div class="term">
-                <p><span class="tag"><%=term.Schema%></span> <span class="big-font"><%=term.Label%></span></p>
+            <div class="term" data-uid="<%=term.UID%>">
+                <p><span data-filter="schema:<%=term.Schema%>" class="tag"><%=term.Schema%></span> <span class="big-font"><%=term.Label%></span></p>
                 <p class="normal-font"><%=term.Definitie%></p>
                 <% if (attributes.length) { %>
                 <p>Attributen:</p>
                 <% for (var i = 0; i < attributes.length; ++i ) { %>
-                    <p class="nerd-font"> - <a data-hook="search" href="#<%=attributes[i]%>"><%=attributes[i]%></a></p>
+                    <p class="nerd-font"> - <a data-filter="<%=attributes[i]%>" href="#<%=attributes[i]%>"><%=attributes[i]%></a></p>
                 <% }} %>
                 <% if (term.Documentatie) { %>
                 <p>Documentatie: <a href="<%=term.Documentatie%>"><%=term.Documentatie%></a></p>
@@ -70,19 +70,25 @@
             var terms = await fetch ('terms.json').then(rs => rs.json()).then(rs => rs.terms);
             var triples = await fetch ('triples.json').then(rs => rs.json()).then(rs => rs.triples);
             render(terms, triples);
-            function search() {
-                let val = this.href.substring(this.href.indexOf("#")+1).replace(/\%20/g, " ");
-                document.getElementById('vind-termen').value = val;
-                filter(val);
-            }
+
             function filter(val) {
                 val = val.toLowerCase();
-                let filteredTerms = terms.filter(function (term) {
-                    return term.Label.toLowerCase().indexOf(val) !== -1 ||
-                           term.Definitie.toLowerCase().indexOf(val) !== -1;
-                });
+                var filteredTerms;
+                if (val.indexOf("schema:") !== -1) {
+                    val = val.replace(/schema:/, "");
+                    filteredTerms = terms.filter(function (term) {
+                        return term.Schema.toLowerCase().indexOf(val) !== -1;
+                    });
+                } else {
+                    filteredTerms = terms.filter(function (term) {
+                        return term.Label.toLowerCase().indexOf(val) !== -1 ||
+                            term.Definitie.toLowerCase().indexOf(val) !== -1;
+                    });
+                }
                 render(filteredTerms, triples);
+                // UPDATE: SHOW/HIDE TERMS INSTEAD
             }
+
             function render(terms, triples) {
                 let html = terms.map(function (term) {
                     let data = {
@@ -97,11 +103,16 @@
                     return tmpl("resultaat_template", data);
                 });
                 document.getElementById("resultaten").innerHTML = html.join("");
-                let links = document.querySelectorAll("[data-hook='search']");
-                for (var i = 0; i < links.length; i++) {
-                    links[i].onclick = search;
+                let filters = document.querySelectorAll("[data-filter]");
+                for (var i = 0; i < filters.length; i++) {
+                    let val = filters[i].dataset.filter;
+                    filters[i].onclick = function () {
+                        document.getElementById('vind-termen').value = val;
+                        filter(val);
+                    };
                 }
             }
+
             document.getElementById('vind-termen').onkeyup = function (e) {
                 let val = e.srcElement.value;
                 filter(val);
