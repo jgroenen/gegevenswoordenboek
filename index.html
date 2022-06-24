@@ -7,10 +7,10 @@
     </head>
     <body>
         <div class="wrapper">
-            <header>
+            <header style="margin: 2em 0 0">
                 <center>
-                Gegevenswoordenboek<br>
-                <input type="text" id="vind-termen" placeholder="Zoek Term">
+                    <a href="/">Gegevenswoordenboek</a><br><br>
+                    <input type="text" id="vind-termen" placeholder="Zoek Term">
                 </center>
             </header>
             <main id="resultaten">
@@ -90,7 +90,7 @@
                     });
                 }
                 render(filteredTerms, triples);
-                // UPDATE: SHOW/HIDE TERMS INSTEAD
+                //terms.
             }
 
             function render(terms, triples) {
