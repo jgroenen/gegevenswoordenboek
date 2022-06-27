@@ -4,10 +4,12 @@
         <meta name="viewport" content="width=320,initial-scale=1,user-scalable=0" />
         <script src="microtemplating.js"></script>
         <title>Gegevenswoordenboek</title>
+        <link rel="stylesheet" href="styles.css">
     </head>
     <body>
+        <p class="top-bar"><a class="info" href="./about">info</a></p>
         <div class="wrapper">
-            <header style="margin: 2em 0 0">
+            <header>
                 <center>
                     <a href="./">Gegevenswoordenboek</a><br><br>
                     <input type="text" id="vind-termen" placeholder="Zoek Term">
@@ -16,58 +18,6 @@
             <main id="resultaten" style="display: none"></main>
             <main id="schemas" style="display: show"></main>
         </div>
-        <style>
-            html, body {
-                font-family: Arial
-            }
-            header, input {
-                font-size: 1.4em;
-                margin: 0.4em;
-                padding: 0.4em;
-            }
-            .wrapper {
-                max-width: 780px;
-                margin: auto;
-            }
-            .term {
-                background: #fff;
-                padding: 10px 20px;
-                margin: 10px 10px;
-                box-shadow: 0 4px 4px #eee;
-            }
-            .tag {
-                font-size: 0.9em;
-                background: #0B71A1;
-                color: white;
-                padding: 0 0.2em;
-                vertical-align: baseline;
-                cursor: pointer;
-            }
-            .big-font {
-                font-size: 1.2em;
-            }
-            .normal-font {
-
-            }
-            .nerd-font {
-                font-family: monospace;
-            }
-            input {
-                font-size: 1em;
-            }
-            a {
-                color: #0B71A1;
-            }
-            .schema {
-                text-align: center;
-                text-align: center;
-                font-size: 1.2em;
-                margin: 1em 2em;
-                padding: 1em;
-                background: #0B71A1;
-                color: white;
-            }
-        </style>
 
         <script type="text/template" id="resultaat_template">
             <div class="term" data-uid="<%=term.UID%>">
@@ -90,6 +40,11 @@
         </script>
 
         <script type="module">
+            if (!localStorage.getItem("splash")) {
+                localStorage.setItem("splash", true);
+                document.location = "./about";
+            }
+
             var terms = await fetch ('terms.json').then(rs => rs.json()).then(rs => rs.terms);
             var triples = await fetch ('triples.json').then(rs => rs.json()).then(rs => rs.triples);
             renderResults(terms, triples);
