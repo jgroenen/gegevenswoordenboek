@@ -10,7 +10,7 @@ terms = terms.map(function (term) {
         "Schema": term.schemaName,
         "UID": term.UID,
         "Label": term.label,
-        "Definitie": "bla " + term.definition,
+        "Definitie": term.definition,
         "Documentatie": term.sourceLD
     };
 });
